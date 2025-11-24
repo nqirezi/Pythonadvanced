@@ -13,6 +13,9 @@ class Person(BaseModel):
     name: str
     age: int
 
+class PersonResponse(BaseModel):
+    name: str
+    age: int
 
 @app.post("/users/")
 async def create_user(user: User):
