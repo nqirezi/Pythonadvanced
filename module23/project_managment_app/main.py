@@ -1,12 +1,23 @@
-from pydantic import BaseModel
-from typing import Optional,List
+from fastapi import FastAPI
+from models import  Developer,Project
 
-class Developer(BaseModel):
-    name: str
-    experience: Optional[int] = None
+app = FastAPI()
 
-class Project(BaseModel):
-    title: str
-    description: Optional[str] = None
-    languages: Optional[List[str]] = []
-    lead_developer: Developer
+@app.post("/developers/")
+def create_developer(developer: Developer):
+    return {"message": "Developer created successfully","developer":developer}
+
+@app.post("/projects/")
+def create_project(project: Project):
+    return {"message": "Project created successfully","project":project}
+
+@app.get("/project/")
+def get_projects():
+    sample_project = Project(
+        title="Sample Project",
+        description="This is a sample project",
+        languages=["Python","JavaScript"],
+        lead_developer=Developer(
+            name="Jane Doe", experience=5)
+    )
+
