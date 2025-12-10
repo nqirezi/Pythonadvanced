@@ -6,6 +6,7 @@ from models import Movie, MovieCreate
 
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "Welcome to movies CRUD API"}
@@ -15,7 +16,7 @@ def read_root():
 def create_movie(movie: MovieCreate):
     """Creates a new movie in the database"""
     movie_id = database.create_movie(movie)
-    return models.Movie(id=movie_id, **movie.dict())
+    return Movie(id=movie_id, **movie.dict())
 
 
 @app.get("/movies/", response_model=List[Movie])
@@ -33,3 +34,23 @@ def read_movie(movie_id: int):
         raise HTTPException(status_code=404, detail="Movie not found")
 
     return movie
+
+
+@app.put("/movies/{movie_id}", response_model=Movie)
+def update_movie(movie_id: int, movie: MovieCreate):
+    updated = database.update_movie(movie_id, movie)
+
+    if not updated:
+        raise HTTPException(status_code=404, detail="Movie not found")
+
+    return Movie(id=movie_id, **movie.dict())
+
+
+@app.delete("/movies/{movie_id}", response_model=dict)
+def delete_movie(movie_id: int):
+    deleted = database.delete_movie(movie_id)
+
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Movie not found")
+
+    return {"message": "Movie deleted successfully"}

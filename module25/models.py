@@ -7,4 +7,3 @@ class MovieCreate(BaseModel):
 
 class Movie(MovieCreate):
     id: int
-    
