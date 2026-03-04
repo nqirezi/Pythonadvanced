@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EduTrack Pro</title>
+</head>
+<body>
+<h2>Register</h2>
+Username: <input id="reg_user"><br>
+Password: <input id="reg_pass" type="password"><br>
+<button onclick="register()">Register</button>
+<p id="reg_result"></p>
+
+<h2>Login</h2>
+Username: <input id="login_user"><br>
+Password: <input id="login_pass" type="password"><br>
+<button onclick="login()">Login</button>
+<p id="login_result"></p>
+
+<h2>Add Grade</h2>
+Subject: <input id="subject"><br>
+Grade: <input id="grade" type="number"><br>
+<button onclick="addGrade()">Add Grade</button>
+<p id="grade_result"></p>
+
+<h2>Your Grades</h2>
+<button onclick="getGrades()">Show Grades</button>
+<pre id="grades_display"></pre>
+
+<script>
+let token = "";
+
+function register() {
+    fetch("http://127.0.0.1:5000/register", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({username: document.getElementById("reg_user").value, password: document.getElementById("reg_pass").value})
+    }).then(res => res.json()).then(data => {
+        document.getElementById("reg_result").innerText = JSON.stringify(data);
+    });
+}
+
+function login() {
+    fetch("http://127.0.0.1:5000/login", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({username: document.getElementById("login_user").value, password: document.getElementById("login_pass").value})
+    }).then(res => res.json()).then(data => {
+        token = data.token;
+        document.getElementById("login_result").innerText = JSON.stringify(data);
+    });
+}
+
+function addGrade() {
+    fetch("http://127.0.0.1:5000/add-grade", {
+        method: "POST",
+        headers: {"Content-Type":"application/json","Authorization": token},
+        body: JSON.stringify({subject: document.getElementById("subject").value, grade: Number(document.getElementById("grade").value)})
+    }).then(res => res.json()).then(data => {
+        document.getElementById("grade_result").innerText = JSON.stringify(data);
+    });
+}
+
+function getGrades() {
+    fetch("http://127.0.0.1:5000/grades", {
+        headers: {"Authorization": token}
+    }).then(res => res.json()).then(data => {
+        document.getElementById("grades_display").innerText = JSON.stringify(data, null, 2);
+    });
+}
+</script>
+</body>
+</html>
